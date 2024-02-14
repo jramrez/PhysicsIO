@@ -1,14 +1,17 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 class Main {
 
         public static void main(String[] args) throws IOException{
         File params = new File("params.txt");
+        File rc = new File("rc.txt");
         FileReader fr = new FileReader(params);
         BufferedReader bf = new BufferedReader(fr);
+        FileWriter writer = new FileWriter(rc);
         
         String line = ""; 
         
@@ -27,7 +30,7 @@ class Main {
         line = bf.readLine();
         int timeend = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
 
-        System.out.println(calcV(12,500,0.25,1));
+        
 
         fr.close();
         bf.close();
