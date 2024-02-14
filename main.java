@@ -27,12 +27,14 @@ class Main {
         line = bf.readLine();
         int timeend = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
 
+        System.out.println(calcV(12,500,0.25,1));
 
         fr.close();
         bf.close();
     }
 
-    public int calcV(int b, int r, double c, int t) {
-        
+    public static double calcV(int b, int r, double c, int t) {
+        double result =  b*(1 - (Math.exp((-t/(r*c)))));
+        return result;
     }
 }
