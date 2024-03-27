@@ -1,43 +1,76 @@
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 class Main {
-
-        public static void main(String[] args) throws IOException{
-        File params = new File("params.txt");
-        File rc = new File("rc.txt");
-        FileReader fr = new FileReader(params);
-        BufferedReader bf = new BufferedReader(fr);
-        FileWriter writer = new FileWriter(rc);
+  public static void main(String[] args) throws IOException {
+    File params = new File("params.txt");
+    File rc = new File("rc.txt");
+    rc.delete();
+    rc.createNewFile();
+    FileWriter writer = new FileWriter(rc, true);
+    Scanner scan = new Scanner(params);
+    scan.useDelimiter(" = [a-z]\\n");  
+     
+    int bVal = Integer.parseInt(scan.next());
         
-        String line = ""; 
-        
-        line = bf.readLine();
-        int bVal = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
-        
-        line = bf.readLine();
-        int rVal = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
+    int rVal = Integer.parseInt(scan.next());
 
-        line = bf.readLine();
-        double cVal = Double.parseDouble(line.substring(line.lastIndexOf(" ") + 1));
+    double cVal = Double.parseDouble(scan.next());
 
-        line = bf.readLine();
-        int time = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
+    int tStart = Integer.parseInt(scan.next());
 
-        line = bf.readLine();
-        int timeend = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
+    int tEnd = Integer.parseInt(scan.next());
 
-        
-
-        fr.close();
-        bf.close();
+    for (double i = tStart; i <= tEnd; i += (double)(tEnd - tStart)/100) {
+      writer.write(calcV(bVal,rVal,cVal,i) + " " + i + "\n");
     }
+    writer.close();
+    scan.close();
 
-    public static double calcV(int b, int r, double c, int t) {
-        double result =  b*(1 - (Math.exp((-t/(r*c)))));
-        return result;
+    Scanner rcScan = new Scanner(rc);
+    rcScan.useDelimiter(" |\\n");
+    double lowBound = 0;
+    double highBound = 0;
+    double current;
+    double closestHigh = 0;
+    double closestLow = 0;
+
+    while (rcScan.hasNext()) {
+      current = Double.parseDouble(rcScan.next());
+      if (Math.abs((bVal*0.95) - current) < Math.abs((bVal*0.95) - closestHigh)) {
+        closestHigh = current;
+      }
+      else if (Math.abs((bVal*0.05) - current) < Math.abs((bVal*0.05) - closestLow)) {
+        closestLow = current;
+      }
+      rcScan.next();
     }
+    
+    rcScan.close();
+    rcScan = new Scanner(rc);
+    rcScan.useDelimiter(" |\\n");
+    
+    do {
+      current = Double.parseDouble(rcScan.next());
+      if (current == closestHigh) {
+        highBound = Double.parseDouble(rcScan.next());
+      }
+      else if (current == closestLow) {
+        lowBound = Double.parseDouble(rcScan.next());
+      }
+    }
+    while (rcScan.hasNext());
+    System.out.println("Rise time is " + calcRise(lowBound, highBound));
+    rcScan.close();
+  }
+
+  public static double calcV(int b, int r, double c, double t) {
+    return (b*(1 - (Math.exp((-t/(r*c))))));
+  }
+
+  public static double calcRise(double ti, double tf) {
+    return (tf - ti);
+  }
 }
